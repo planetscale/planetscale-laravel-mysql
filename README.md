@@ -87,9 +87,7 @@ Let's migrate and seed the database now.
 
 You can view the application at [http://localhost:8000](http://localhost:8000).
 
-3. Refresh your Laravel homepage and you'll see a list of users.
-
-![Laravel PlanetScale starter app homepage](./laravel-users.png)
+1. Refresh your Laravel homepage and you'll see a list of users.
 
 ## Add data manually
 
@@ -125,8 +123,6 @@ From here, you can run MySQL queries and DDL against your database branch.
    ```sql
    SELECT * FROM users;
    ```
-
-![PlanetScale web console](./laravel-web-console.png)
 
 ## What's next?
 
