@@ -1,61 +1,139 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Learn how to integrate PlanetScale with a sample Laravel application
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This sample application demonstrates how to connect to a PlanetScale MySQL database, run migrations, seed the database, and display the data.
 
-## About Laravel
+For the full tutorial, see the [Laravel PlanetScale documentation](https://planetscale.comhttps://planetscale.com/docs/tutorials/connect-laravel-app).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Prerequisites
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- [PHP](https://www.php.net/manual/en/install.php) &mdash; This tutorial uses `v8.1`
+- [Composer](https://getcomposer.org/)
+- A [free PlanetScale account](https://auth.planetscale.com/sign-up)
+- [PlanetScale CLI](https://github.com/planetscale/cli) &mdash;You can also follow this tutorial using just the PlanetScale admin dashboard, but the CLI will make setup quicker. For dashboard instructions, see [the full tutorial](https://planetscale.comhttps://planetscale.com/docs/tutorials/connect-laravel-app).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Set up the Laravel app
 
-## Learning Laravel
+1. Clone the starter Laravel application:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+   ```bash
+   git clone https://github.com/planetscale/planetscale-laravel-mysql.git
+   ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+2. Enter into the folder and install the dependencies:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+   ```bash
+   cd planetscale-laravel-mysql
+   composer install
+   ```
 
-## Laravel Sponsors
+   You may need to run `composer update` if you haven't updated in a while.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+3. Copy the `.env.example` file into `.env` and generate the app key:
 
-### Premium Partners
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+## Set up the database
 
-## Contributing
+If this is your first time in the dashboard, you'll be prompted to [create an organization](https://planetscale.com/docs/onboarding/create-an-organization#creating-a-new-organization) and go through the database creation walkthrough. Otherwise, click "**New database**" > "**Create new database**".
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- **Name** — You can use any name with lowercase, alphanumeric characters, or underscores. We also permit dashes, but don't recommend them, as they may need to be escaped in some instances.
+- **Region** — Choose the [region](https://planetscale.com/docs/concepts/regions#available-regions) closest to you or your application. It's important to note if you intend to make this branch a production branch, you will not be able to change the region later, so choose the region with this in mind.
+- **Storage option** — Choose a storage option. You can choose between network-attached storage or [Metal](/metal) for storage. For more information, see the [plans](plans documentation).
+- **Cluster size** — Select the [desired cluster size](https://planetscale.com/docs/concepts/planetscale-plans) for your database.
 
-## Code of Conduct
+Finally, click "**Create database**".
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Connect to the Laravel app
 
-## Security Vulnerabilities
+First, you need to generate a database username and password so that you can use it to connect to your application.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+You'll be presented with this option after creating your database. You can also access the password creation page by clicking "**Connect**" -> "**Create password**".
 
-## License
+Click "Laravel" as the framework, then copy the contents of the `.env` tab and paste them into your own `.env` file in your Laravel application. The structure will look like this:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+DB_CONNECTION=mysql
+DB_HOST=<ACCESS HOST URL>
+DB_PORT=3306
+DB_DATABASE=<DATABASE_NAME>
+DB_USERNAME=<USERNAME>
+DB_PASSWORD=<PASSWORD>
+MYSQL_ATTR_SSL_CA=/etc/ssl/cert.pem
+```
+
+The `MYSQL_ATTR_SSL_CA` value is platform-dependent. Please refer to our documentation around [how to connect to PlanetScale securely](https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration) for the platform you're using.
+
+## Run migrations and seeder
+
+
+Laravel uses foreign key constraints by default. PlanetScale, however, has foreign key constraint support turned off by default. For this tutorial, we're keeping the Laravel defaults, so you need to enable [foreign key constraint](https://planetscale.com/docs/concepts/foreign-key-constraints) support in your database settings page. Click the checkbox next to "Allow foreign key constraints" and press "Save database settings".
+
+Let's migrate and seed the database now.
+
+1. In the root of the Laravel project, run the following to migrate and seed the database:
+
+   ```bash
+   php artisan migrate --seed
+   ```
+
+2. Start the application:
+
+   ```bash
+   php artisan serve
+   ```
+
+You can view the application at [http://localhost:8000](http://localhost:8000).
+
+3. Refresh your Laravel homepage and you'll see a list of users.
+
+![Laravel PlanetScale starter app homepage](./laravel-users.png)
+
+## Add data manually
+
+If you want to continue to play around with adding data on the fly, you have a few options:
+
+- PlanetScale [dashboard console](https://planetscale.com/docs/concepts/web-console)
+- [Laravel Tinker](hhttps://laravel.comhttps://planetscale.com/docs/12.x/artisan#tinker)
+- [PlanetScale CLI shell](https://planetscale.com/docs/reference/shell)
+- Your favorite MySQL client (for a list of tested MySQL clients, review our article on [how to connect MySQL GUI applications](https://planetscale.com/docs/tutorials/connect-mysql-gui))
+
+The first option is covered below.
+
+### Add data in PlanetScale dashboard console
+
+PlanetScale has a [built-in console](https://planetscale.com/docs/concepts/web-console) where you can run MySQL commands against your branches.
+
+By default, web console access to production branches is disabled to prevent accidental deletion. From your database's dashboard page, click on the "**Settings**" tab, check the box labelled "**Allow web console access to production branches**", and click "**Save database settings**".
+
+To access it, click "**Console**" > select your branch > "**Connect**".
+
+From here, you can run MySQL queries and DDL against your database branch.
+
+1. Add a record to the `users` table:
+
+   ```sql
+   UPDATE users
+   SET email = 'cyrus@planetscale.com'
+   WHERE id=1;
+   ```
+
+2. Refresh the Laravel homepage to see the new record. You can also verify it was added in the console with:
+
+   ```sql
+   SELECT * FROM users;
+   ```
+
+![PlanetScale web console](./laravel-web-console.png)
+
+## What's next?
+
+Once you're done with initial development, you can enable [safe migrations](https://planetscale.com/docs/concepts/safe-migrations) to protect from accidental schema changes and enable zero-downtime deployments.
+
+To learn more about PlanetScale, take a look at the following resources:
+
+- [PlanetScale workflow](https://planetscale.com/docs/concepts/planetscale-workflow) — Quick overview of the PlanetScale workflow: branching, non-blocking schema changes, deploy requests, and reverting a schema change.
+- [PlanetScale branching](https://planetscale.com/docs/concepts/branching) — Learn how to utilize branching to ship schema changes with no locking or downtime.
+- [PlanetScale CLI](https://planetscale.com/docs/reference/planetscale-cli) — Power up your workflow with the PlanetScale CLI. Every single action you just performed in this quickstart (and much more) can also be done with the CLI.
