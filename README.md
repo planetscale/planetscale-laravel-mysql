@@ -1,6 +1,6 @@
 # Learn how to integrate PlanetScale with a sample Laravel application
 
-> **Note:** This Laravel tutorial uses `DB_CONNECTION=mysql` and targets PlanetScale Vitess/MySQL. PlanetScale also offers managed PostgreSQL; use Laravel's PostgreSQL configuration when connecting to those databases. For more information and examples, see the [PlanetScale Postgres documentation](https://planetscale.com/docs/postgres).
+> **Note:** This tutorial targets PlanetScale Vitess/MySQL. PlanetScale also offers managed PostgreSQL. For more information, see the [PlanetScale Postgres documentation](https://planetscale.com/docs/postgres).
 
 This sample application demonstrates how to connect to a PlanetScale MySQL database, run migrations, seed the database, and display the data.
 
